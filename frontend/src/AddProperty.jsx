@@ -1,6 +1,9 @@
 import { useState } from "react";
 import "./AddProperty.css";
 
+const API_URL =
+  "https://gharbazaar-hb8d.onrender.com/api";
+
 function AddProperty({
   token,
   onPropertyAdded,
@@ -27,7 +30,6 @@ function AddProperty({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   // ========================================
   // HANDLE INPUT
   // ========================================
@@ -38,7 +40,6 @@ function AddProperty({
       [e.target.name]: e.target.value,
     });
   };
-
 
   // ========================================
   // SELECT MULTIPLE IMAGES
@@ -55,22 +56,20 @@ function AddProperty({
       return;
     }
 
-
     // Maximum 10 images
     if (
-      selectedImages.length +
-        files.length >
+      selectedImages.length + files.length >
       10
     ) {
       setError(
         "You can upload maximum 10 photos."
       );
 
+      e.target.value = "";
       return;
     }
 
-
-    // Validate file types
+    // Allowed image types
     const allowedTypes = [
       "image/jpeg",
       "image/jpg",
@@ -78,49 +77,43 @@ function AddProperty({
       "image/webp",
     ];
 
-    const invalidFile =
-      files.find(
-        (file) =>
-          !allowedTypes.includes(
-            file.type
-          )
-      );
+    const invalidFile = files.find(
+      (file) =>
+        !allowedTypes.includes(file.type)
+    );
 
     if (invalidFile) {
       setError(
         "Only JPG, JPEG, PNG and WEBP images are allowed."
       );
 
+      e.target.value = "";
       return;
     }
 
-
-    // Validate file size
-    const largeFile =
-      files.find(
-        (file) =>
-          file.size >
-          5 * 1024 * 1024
-      );
+    // Maximum 5MB per image
+    const largeFile = files.find(
+      (file) =>
+        file.size > 5 * 1024 * 1024
+    );
 
     if (largeFile) {
       setError(
         "Each image must be smaller than 5MB."
       );
 
+      e.target.value = "";
       return;
     }
-
 
     setSelectedImages([
       ...selectedImages,
       ...files,
     ]);
 
-    // Reset input so same image can be selected again
+    // Allow selecting same image again
     e.target.value = "";
   };
-
 
   // ========================================
   // REMOVE IMAGE
@@ -135,7 +128,6 @@ function AddProperty({
     );
   };
 
-
   // ========================================
   // SUBMIT PROPERTY
   // ========================================
@@ -147,8 +139,10 @@ function AddProperty({
     setError("");
     setLoading(true);
 
-
     try {
+      // ========================================
+      // LOGIN CHECK
+      // ========================================
 
       if (!token) {
         setError(
@@ -156,10 +150,8 @@ function AddProperty({
         );
 
         setLoading(false);
-
         return;
       }
-
 
       // ========================================
       // STEP 1: UPLOAD IMAGES
@@ -167,28 +159,20 @@ function AddProperty({
 
       let imageUrls = [];
 
-
-      if (
-        selectedImages.length > 0
-      ) {
-
+      if (selectedImages.length > 0) {
         const imageFormData =
           new FormData();
 
-
-        selectedImages.forEach(
-          (image) => {
-            imageFormData.append(
-              "images",
-              image
-            );
-          }
-        );
-
+        selectedImages.forEach((image) => {
+          imageFormData.append(
+            "images",
+            image
+          );
+        });
 
         const uploadResponse =
           await fetch(
-            "https://gharbazaar-hb8d.onrender.com/api/upload/multiple",
+            `${API_URL}/upload/multiple`,
             {
               method: "POST",
 
@@ -197,15 +181,12 @@ function AddProperty({
                   `Bearer ${token}`,
               },
 
-              body:
-                imageFormData,
+              body: imageFormData,
             }
           );
 
-
         const uploadData =
           await uploadResponse.json();
-
 
         if (!uploadResponse.ok) {
           setError(
@@ -214,16 +195,12 @@ function AddProperty({
           );
 
           setLoading(false);
-
           return;
         }
 
-
         imageUrls =
-          uploadData.imageUrls ||
-          [];
+          uploadData.imageUrls || [];
       }
-
 
       // ========================================
       // STEP 2: CREATE PROPERTY
@@ -231,7 +208,7 @@ function AddProperty({
 
       const propertyResponse =
         await fetch(
-          "https://gharbazaar-hb8d.onrender.com/api/properties",
+          `${API_URL}/properties`,
           {
             method: "POST",
 
@@ -244,7 +221,6 @@ function AddProperty({
             },
 
             body: JSON.stringify({
-
               title:
                 formData.title,
 
@@ -299,10 +275,8 @@ function AddProperty({
           }
         );
 
-
       const propertyData =
         await propertyResponse.json();
-
 
       if (!propertyResponse.ok) {
         setError(
@@ -311,10 +285,8 @@ function AddProperty({
         );
 
         setLoading(false);
-
         return;
       }
-
 
       // ========================================
       // SUCCESS
@@ -323,7 +295,6 @@ function AddProperty({
       setMessage(
         "Property added successfully!"
       );
-
 
       setFormData({
         title: "",
@@ -339,9 +310,7 @@ function AddProperty({
         furnished: "Unfurnished",
       });
 
-
       setSelectedImages([]);
-
 
       if (onPropertyAdded) {
         onPropertyAdded(
@@ -349,9 +318,7 @@ function AddProperty({
         );
       }
 
-
     } catch (error) {
-
       console.log(
         "ADD PROPERTY ERROR:"
       );
@@ -361,13 +328,10 @@ function AddProperty({
       setError(
         "Unable to connect to backend server."
       );
-
     }
-
 
     setLoading(false);
   };
-
 
   // ========================================
   // UI
@@ -377,6 +341,10 @@ function AddProperty({
     <div className="add-property-page">
 
       <div className="add-property-card">
+
+        {/* ========================================
+            HEADER
+        ======================================== */}
 
         <div className="add-property-header">
 
@@ -403,6 +371,9 @@ function AddProperty({
 
         </div>
 
+        {/* ========================================
+            FORM
+        ======================================== */}
 
         <form
           className="add-property-form"
@@ -410,7 +381,7 @@ function AddProperty({
         >
 
           {/* ========================================
-              BASIC INFORMATION
+              PROPERTY INFORMATION
           ======================================== */}
 
           <div className="form-section">
@@ -418,7 +389,6 @@ function AddProperty({
             <h2>
               Property Information
             </h2>
-
 
             <label>
               Property Title
@@ -432,7 +402,6 @@ function AddProperty({
               onChange={handleChange}
               required
             />
-
 
             <label>
               Description
@@ -450,7 +419,6 @@ function AddProperty({
 
           </div>
 
-
           {/* ========================================
               PRICE AND LOCATION
           ======================================== */}
@@ -461,10 +429,10 @@ function AddProperty({
               Price & Location
             </h2>
 
-
             <div className="form-grid">
 
               <div>
+
                 <label>
                   Price
                 </label>
@@ -478,10 +446,11 @@ function AddProperty({
                   min="0"
                   required
                 />
+
               </div>
 
-
               <div>
+
                 <label>
                   Area (sq.ft)
                 </label>
@@ -495,10 +464,10 @@ function AddProperty({
                   min="0"
                   required
                 />
+
               </div>
 
             </div>
-
 
             <label>
               Location
@@ -515,7 +484,6 @@ function AddProperty({
 
           </div>
 
-
           {/* ========================================
               PROPERTY DETAILS
           ======================================== */}
@@ -526,8 +494,9 @@ function AddProperty({
               Property Details
             </h2>
 
-
             <div className="form-grid">
+
+              {/* PROPERTY TYPE */}
 
               <div>
 
@@ -563,6 +532,7 @@ function AddProperty({
 
               </div>
 
+              {/* LISTING TYPE */}
 
               <div>
 
@@ -590,6 +560,7 @@ function AddProperty({
 
               </div>
 
+              {/* BEDROOMS */}
 
               <div>
 
@@ -611,6 +582,7 @@ function AddProperty({
 
               </div>
 
+              {/* BATHROOMS */}
 
               <div>
 
@@ -632,6 +604,7 @@ function AddProperty({
 
               </div>
 
+              {/* YEAR BUILT */}
 
               <div>
 
@@ -653,6 +626,7 @@ function AddProperty({
 
               </div>
 
+              {/* FURNISHED */}
 
               <div>
 
@@ -688,9 +662,8 @@ function AddProperty({
 
           </div>
 
-
           {/* ========================================
-              MULTIPLE PHOTOS
+              PROPERTY PHOTOS
           ======================================== */}
 
           <div className="form-section">
@@ -704,7 +677,6 @@ function AddProperty({
               Each photo must be
               smaller than 5MB.
             </p>
-
 
             <label
               className="photo-upload-box"
@@ -733,11 +705,11 @@ function AddProperty({
 
             </label>
 
+            {/* ========================================
+                PHOTO PREVIEW
+            ======================================== */}
 
-            {/* PHOTO PREVIEW */}
-
-            {selectedImages.length >
-              0 && (
+            {selectedImages.length > 0 && (
 
               <div className="image-preview-grid">
 
@@ -753,7 +725,7 @@ function AddProperty({
 
                       <div
                         className="image-preview-item"
-                        key={`${image.name}-${index}`}
+                        key={`${image.name}-${image.lastModified}-${index}`}
                       >
 
                         <img
@@ -780,7 +752,6 @@ function AddProperty({
                       </div>
 
                     );
-
                   }
                 )}
 
@@ -788,9 +759,7 @@ function AddProperty({
 
             )}
 
-
-            {selectedImages.length >
-              0 && (
+            {selectedImages.length > 0 && (
 
               <p className="photo-count">
                 {selectedImages.length}
@@ -801,9 +770,8 @@ function AddProperty({
 
           </div>
 
-
           {/* ========================================
-              MESSAGES
+              SUCCESS MESSAGE
           ======================================== */}
 
           {message && (
@@ -814,6 +782,9 @@ function AddProperty({
 
           )}
 
+          {/* ========================================
+              ERROR MESSAGE
+          ======================================== */}
 
           {error && (
 
@@ -822,7 +793,6 @@ function AddProperty({
             </div>
 
           )}
-
 
           {/* ========================================
               SUBMIT
