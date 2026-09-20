@@ -7,7 +7,6 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-
 // ========================================
 // UPLOAD FOLDER
 // ========================================
@@ -23,7 +22,6 @@ if (!fs.existsSync(uploadFolder)) {
     recursive: true,
   });
 }
-
 
 // ========================================
 // STORAGE
@@ -47,7 +45,6 @@ const storage = multer.diskStorage({
   },
 });
 
-
 // ========================================
 // FILE FILTER
 // ========================================
@@ -57,7 +54,6 @@ const fileFilter = (
   file,
   cb
 ) => {
-
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -80,7 +76,6 @@ const fileFilter = (
   }
 };
 
-
 // ========================================
 // MULTER
 // ========================================
@@ -98,7 +93,6 @@ const upload = multer({
   fileFilter,
 });
 
-
 // ========================================
 // SINGLE IMAGE UPLOAD
 // ========================================
@@ -108,9 +102,7 @@ router.post(
   protect,
   upload.single("image"),
   (req, res) => {
-
     try {
-
       if (!req.file) {
         return res.status(400).json({
           message:
@@ -126,11 +118,10 @@ router.post(
       );
 
       console.log(
-        req.file.filename
+        imageUrl
       );
 
       return res.status(201).json({
-
         message:
           "Image uploaded successfully",
 
@@ -141,26 +132,22 @@ router.post(
       });
 
     } catch (error) {
-
       console.log(
         "UPLOAD ERROR:"
       );
 
-      console.log(error);
+      console.log(
+        error.message
+      );
 
       return res.status(500).json({
-
         message:
           error.message ||
           "Image upload failed",
-
       });
-
     }
-
   }
 );
-
 
 // ========================================
 // MULTIPLE IMAGE UPLOAD
@@ -169,30 +156,27 @@ router.post(
 router.post(
   "/multiple",
   protect,
-  upload.array("images", 10),
+  upload.array(
+    "images",
+    10
+  ),
   (req, res) => {
-
     try {
-
       if (
         !req.files ||
         req.files.length === 0
       ) {
-
         return res.status(400).json({
           message:
             "Please select at least one image",
         });
-
       }
 
       const imageUrls =
-        req.files.map((file) => {
-
-          return `https://gharbazaar-hb8d.onrender.com/uploads/${file.filename}`;
-
-        });
-
+        req.files.map(
+          (file) =>
+            `https://gharbazaar-hb8d.onrender.com/uploads/${file.filename}`
+        );
 
       console.log(
         "================================"
@@ -210,45 +194,42 @@ router.post(
         "================================"
       );
 
-
       return res.status(201).json({
-
         message:
           "Images uploaded successfully",
 
         imageUrls,
-
       });
 
     } catch (error) {
-
       console.log(
         "MULTIPLE UPLOAD ERROR:"
       );
 
-      console.log(error);
+      console.log(
+        error.message
+      );
 
       return res.status(500).json({
-
         message:
           error.message ||
           "Image upload failed",
-
       });
-
     }
-
   }
 );
-
 
 // ========================================
 // MULTER ERROR HANDLER
 // ========================================
 
 router.use(
-  (error, req, res, next) => {
-
+  (
+    error,
+    req,
+    res,
+    next
+  ) => {
     console.log(
       "MULTER ERROR:"
     );
@@ -258,15 +239,15 @@ router.use(
     );
 
     return res.status(400).json({
-
       message:
         error.message ||
         "Image upload failed",
-
     });
-
   }
 );
 
+// ========================================
+// EXPORT
+// ========================================
 
 module.exports = router;
