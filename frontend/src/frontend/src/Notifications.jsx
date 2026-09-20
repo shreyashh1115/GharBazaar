@@ -27,7 +27,7 @@ function Notifications({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/notifications",
+        "https://gharbazaar-hb8d.onrender.com/api/notifications",
         {
           headers: {
             Authorization:
@@ -61,7 +61,7 @@ function Notifications({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/notifications/unread-count",
+        "https://gharbazaar-hb8d.onrender.com/api/notifications/unread-count",
         {
           headers: {
             Authorization:
@@ -117,7 +117,7 @@ function Notifications({
       try {
         if (!notification.isRead) {
           await fetch(
-            `http://localhost:5000/api/notifications/${notification._id}/read`,
+            `https://gharbazaar-hb8d.onrender.com/api/notifications/${notification._id}/read`,
             {
               method: "PUT",
               headers: {
@@ -187,7 +187,7 @@ function Notifications({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/notifications/read-all",
+        "https://gharbazaar-hb8d.onrender.com/api/notifications/read-all",
         {
           method: "PUT",
           headers: {
@@ -231,7 +231,7 @@ function Notifications({
       try {
         const response =
           await fetch(
-            `http://localhost:5000/api/notifications/${notificationId}`,
+            `https://gharbazaar-hb8d.onrender.com/api/notifications/${notificationId}`,
             {
               method: "DELETE",
               headers: {

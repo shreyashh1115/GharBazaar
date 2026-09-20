@@ -46,7 +46,7 @@ function Register() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/register",
+        "https://gharbazaar-hb8d.onrender.com/api/auth/register",
         {
           method: "POST",
 

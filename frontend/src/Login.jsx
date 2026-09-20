@@ -27,7 +27,7 @@ function Login({ onLoginSuccess }) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "https://gharbazaar-hb8d.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

@@ -6,7 +6,7 @@ import React, {
 import "./Enquiries.css";
 
 const API_URL =
-  "http://localhost:5000";
+  "https://gharbazaar-hb8d.onrender.com";
 
 const Enquiries = ({
   onViewDetails,

@@ -119,7 +119,7 @@ router.post(
       }
 
       const imageUrl =
-        `http://localhost:5000/uploads/${req.file.filename}`;
+        `https://gharbazaar-hb8d.onrender.com/uploads/${req.file.filename}`;
 
       console.log(
         "IMAGE UPLOADED:"
@@ -189,7 +189,7 @@ router.post(
       const imageUrls =
         req.files.map((file) => {
 
-          return `http://localhost:5000/uploads/${file.filename}`;
+          return `https://gharbazaar-hb8d.onrender.com/uploads/${file.filename}`;
 
         });
 

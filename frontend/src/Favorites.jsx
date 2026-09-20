@@ -15,7 +15,7 @@ function Favorites({
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/favorites",
+        "https://gharbazaar-hb8d.onrender.com/api/favorites",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ function Favorites({
   ) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/favorites/${propertyId}`,
+        `https://gharbazaar-hb8d.onrender.com/api/favorites/${propertyId}`,
         {
           method: "DELETE",
 

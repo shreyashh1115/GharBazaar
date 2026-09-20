@@ -78,7 +78,7 @@ function Profile({
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/properties"
+          "https://gharbazaar-hb8d.onrender.com/api/properties"
         );
 
         const data = await response.json();
@@ -172,7 +172,7 @@ function Profile({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/profile",
+        "https://gharbazaar-hb8d.onrender.com/api/auth/profile",
         {
           method: "PUT",
 
@@ -302,7 +302,7 @@ function Profile({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/change-password",
+        "https://gharbazaar-hb8d.onrender.com/api/auth/change-password",
         {
           method: "PUT",
 
@@ -377,7 +377,7 @@ function Profile({
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/properties/${propertyId}`,
+        `https://gharbazaar-hb8d.onrender.com/api/properties/${propertyId}`,
         {
           method: "DELETE",
 

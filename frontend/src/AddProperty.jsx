@@ -188,7 +188,7 @@ function AddProperty({
 
         const uploadResponse =
           await fetch(
-            "http://localhost:5000/api/upload/multiple",
+            "https://gharbazaar-hb8d.onrender.com/api/upload/multiple",
             {
               method: "POST",
 
@@ -231,7 +231,7 @@ function AddProperty({
 
       const propertyResponse =
         await fetch(
-          "http://localhost:5000/api/properties",
+          "https://gharbazaar-hb8d.onrender.com/api/properties",
           {
             method: "POST",
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./PropertyDetails.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://gharbazaar-hb8d.onrender.com/api";
 
 function PropertyDetails({
   propertyId,
