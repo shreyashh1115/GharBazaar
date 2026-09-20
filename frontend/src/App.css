@@ -1,0 +1,789 @@
+/* ================================
+   GLOBAL
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+  background: #f5f8f7;
+  color: #222;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+/* ================================
+   APP
+================================ */
+
+.app {
+  min-height: 100vh;
+  background: #f5f8f7;
+}
+
+
+/* ================================
+   NAVBAR
+================================ */
+
+.navbar {
+  width: 100%;
+  min-height: 76px;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-bottom: 1px solid #e8eeee;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  color: #123c36;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #444;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.nav-links a:hover {
+  color: #14786b;
+}
+
+.nav-property-link {
+  border: none;
+  background: transparent;
+  color: #444;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0;
+}
+
+.nav-property-link:hover {
+  color: #14786b;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-btn,
+.signup-btn {
+  border-radius: 8px;
+  padding: 10px 17px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.login-btn {
+  background: white;
+  color: #14786b;
+  border: 1px solid #14786b;
+}
+
+.login-btn:hover {
+  background: #eef8f6;
+}
+
+.signup-btn {
+  border: 1px solid #14786b;
+  background: #14786b;
+  color: white;
+}
+
+.signup-btn:hover {
+  background: #0f6258;
+}
+
+
+/* ================================
+   HERO
+================================ */
+
+.hero {
+  min-height: 560px;
+  padding: 90px 6%;
+  display: flex;
+  align-items: center;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.45),
+      rgba(255, 255, 255, 0.45)
+    ),
+    url("/hero-house.jpg.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-content {
+  width: 100%;
+  max-width: 1180px;
+  margin: auto;
+}
+
+.small-title {
+  margin: 0 0 12px;
+  color: #14786b;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #123c36;
+  font-size: clamp(45px, 6vw, 72px);
+  line-height: 1.04;
+  letter-spacing: -2px;
+}
+
+.hero h1 span {
+  color: #14786b;
+}
+
+.hero-text {
+  max-width: 570px;
+  margin: 25px 0 35px;
+  color: #66736f;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+
+/* ================================
+   SEARCH BOX
+================================ */
+
+.search-box {
+  width: 100%;
+  max-width: 1120px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns:
+    130px
+    1.5fr
+    140px
+    140px
+    140px
+    100px
+    90px;
+  gap: 10px;
+  background: white;
+  border: 1px solid #e1e9e6;
+  border-radius: 14px;
+  box-shadow:
+    0 15px 35px
+    rgba(18, 60, 54, 0.09);
+}
+
+.search-box input,
+.search-box select {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid #dce5e2;
+  border-radius: 8px;
+  outline: none;
+  background: white;
+  color: #333;
+  font-size: 14px;
+}
+
+.search-box input:focus,
+.search-box select:focus {
+  border-color: #14786b;
+  box-shadow:
+    0 0 0 3px
+    rgba(20, 120, 107, 0.08);
+}
+
+.search-box button {
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #14786b;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.search-box button:hover {
+  background: #0f6258;
+}
+
+.search-box button:last-child {
+  background: #eef3f1;
+  color: #45605a;
+}
+
+.search-box button:last-child:hover {
+  background: #dfeae7;
+}
+
+
+/* ================================
+   PROPERTIES SECTION
+================================ */
+
+.properties {
+  max-width: 1180px;
+  margin: auto;
+  padding: 80px 20px;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.65),
+      rgba(255, 255, 255, 0.65)
+    ),
+    url("/hero-house.jpg.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #123c36;
+  font-size: 34px;
+  line-height: 1.2;
+}
+
+.view-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  background: #14786b;
+  color: white;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.view-btn:hover {
+  background: #0f6258;
+  transform: translateY(-1px);
+}
+
+
+/* ================================
+   ACTIVE FILTERS
+================================ */
+
+.properties > div[style] {
+  border: 1px solid #d8e9e4;
+}
+
+
+/* ================================
+   PROPERTY GRID
+================================ */
+
+.property-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 25px;
+}
+
+
+/* ================================
+   PROPERTY CARD
+================================ */
+
+.property-card {
+  overflow: hidden;
+  background: white;
+  border: 1px solid #e4ebe9;
+  border-radius: 16px;
+  box-shadow:
+    0 7px 25px
+    rgba(18, 60, 54, 0.06);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.property-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 16px 35px
+    rgba(18, 60, 54, 0.13);
+}
+
+
+/* ================================
+   PROPERTY IMAGE
+================================ */
+
+.property-image {
+  width: 100%;
+  height: 225px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(
+      135deg,
+      #dfece9,
+      #f2f7f6
+    );
+}
+
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.property-card:hover
+.property-image img {
+  transform: scale(1.05);
+}
+
+.property-image span {
+  font-size: 55px;
+}
+
+
+/* ================================
+   PROPERTY INFO
+================================ */
+
+.property-info {
+  padding: 22px;
+}
+
+.property-info > span:first-child {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #e9f6f3;
+  color: #14786b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.property-info h3 {
+  margin: 0 0 12px;
+  color: #183f39;
+  font-size: 21px;
+  line-height: 1.3;
+}
+
+.property-info p {
+  margin: 8px 0;
+  color: #6b7774;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.property-info strong {
+  display: block;
+  margin-top: 18px;
+  color: #123c36;
+  font-size: 23px;
+}
+
+
+/* ================================
+   EDIT / DELETE BUTTONS
+================================ */
+
+.property-info button {
+  transition: 0.2s;
+}
+
+.property-info button:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+
+/* ================================
+   PROPERTY MESSAGE
+================================ */
+
+.property-message {
+  padding: 45px 20px;
+  text-align: center;
+  background: white;
+  border: 1px solid #e5ecea;
+  border-radius: 14px;
+  color: #687571;
+}
+
+.property-message p {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.property-error {
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff1f1;
+  color: #d32f2f;
+  text-align: center;
+}
+
+
+/* ================================
+   FOOTER
+================================ */
+
+footer {
+  margin-top: 30px;
+  padding: 55px 20px;
+  background: #123c36;
+  color: white;
+  text-align: center;
+}
+
+footer h2 {
+  margin: 0 0 10px;
+  font-size: 27px;
+}
+
+footer p {
+  margin: 0;
+  color: #c9d8d4;
+}
+
+
+/* ================================
+   BACK HOME
+================================ */
+
+.back-home {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  background: #f5f8f7;
+}
+
+.back-home button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #14786b;
+  color: white;
+  font-weight: 600;
+}
+
+.back-home button:hover {
+  background: #0f6258;
+}
+
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1050px) {
+
+  .navbar {
+    padding: 0 4%;
+  }
+
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-buttons {
+    gap: 6px;
+  }
+
+  .hero {
+    padding: 75px 4%;
+  }
+
+  .search-box {
+    grid-template-columns:
+      1fr 1.5fr 1fr;
+  }
+
+  .property-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 760px) {
+
+  .navbar {
+    min-height: auto;
+    padding: 18px 20px;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+
+  .logo {
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    gap: 18px;
+    order: 2;
+  }
+
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+    order: 3;
+    flex-wrap: wrap;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 65px 20px;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+  }
+
+  .hero-text {
+    font-size: 15px;
+  }
+
+  .search-box {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .search-box input,
+  .search-box select,
+  .search-box button {
+    height: 48px;
+  }
+
+  .properties {
+    padding: 55px 20px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-heading h2 {
+    font-size: 28px;
+  }
+
+  .property-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .property-image {
+    height: 240px;
+  }
+
+}
+
+
+/* ================================
+   SMALL MOBILE
+================================ */
+
+@media (max-width: 480px) {
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .nav-links a,
+  .nav-property-link {
+    font-size: 13px;
+  }
+
+  .login-btn,
+  .signup-btn {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 50px 16px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    letter-spacing: -1px;
+  }
+
+  .properties {
+    padding: 45px 16px;
+  }
+
+  .property-info {
+    padding: 18px;
+  }
+
+  .property-info h3 {
+    font-size: 19px;
+  }
+
+  .property-info strong {
+    font-size: 21px;
+  }
+
+}
+
+
+/* ========================================
+   PROPERTY CARD IMAGE
+======================================== */
+
+.property-image {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* ========================================
+   IMAGE PLACEHOLDER
+======================================== */
+
+.property-image-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-image:
+    linear-gradient(
+      rgba(18, 60, 54, 0.18),
+      rgba(18, 60, 54, 0.18)
+    ),
+    url("/hero-house.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: rgb(16, 16, 16);
+}
+
+.property-image-placeholder::after {
+  content: "🏠";
+  position: absolute;
+
+  font-size: 52px;
+
+  background: rgba(23, 23, 23, 0.88);
+  width: 82px;
+  height: 82px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ========================================
+   PHOTO COUNT
+======================================== */
+
+.property-photo-count {
+  position: absolute;
+
+  right: 10px;
+  bottom: 10px;
+
+  padding: 6px 10px;
+
+  border-radius: 7px;
+
+  background: rgba(0, 0, 0, 0.65);
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  z-index: 2;
+}
