@@ -12,6 +12,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
