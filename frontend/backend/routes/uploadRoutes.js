@@ -1,59 +1,20 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// ========================================
-// UPLOAD FOLDER
-// ========================================
-
-const uploadFolder = path.join(
-  __dirname,
-  "..",
-  "uploads"
-);
-
-if (!fs.existsSync(uploadFolder)) {
-  fs.mkdirSync(uploadFolder, {
-    recursive: true,
-  });
-}
-
-// ========================================
-// STORAGE
-// ========================================
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadFolder);
-  },
-
-  filename: (req, file, cb) => {
-    const extension =
-      path.extname(file.originalname);
-
-    const filename =
-      `${Date.now()}-${Math.round(
-        Math.random() * 1E9
-      )}${extension}`;
-
-    cb(null, filename);
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ========================================
-// FILE FILTER
-// ========================================
+const storage = multer.memoryStorage();
 
-const fileFilter = (
-  req,
-  file,
-  cb
-) => {
+const fileFilter = (req, file, cb) => {
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -61,11 +22,7 @@ const fileFilter = (
     "image/webp",
   ];
 
-  if (
-    allowedTypes.includes(
-      file.mimetype
-    )
-  ) {
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
@@ -76,69 +33,60 @@ const fileFilter = (
   }
 };
 
-// ========================================
-// MULTER
-// ========================================
-
 const upload = multer({
   storage,
-
   limits: {
-    fileSize:
-      5 * 1024 * 1024,
-
+    fileSize: 5 * 1024 * 1024,
     files: 10,
   },
-
   fileFilter,
 });
 
-// ========================================
-// SINGLE IMAGE UPLOAD
-// ========================================
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "gharbazaar/properties",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
 
+    stream.end(fileBuffer);
+  });
+};
+
+// SINGLE IMAGE
 router.post(
   "/single",
   protect,
   upload.single("image"),
-  (req, res) => {
+  async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({
-          message:
-            "Please select an image",
+          message: "Please select an image",
         });
       }
 
-      const imageUrl =
-        `https://gharbazaar-hb8d.onrender.com/uploads/${req.file.filename}`;
-
-      console.log(
-        "IMAGE UPLOADED:"
-      );
-
-      console.log(
-        imageUrl
+      const result = await uploadToCloudinary(
+        req.file.buffer
       );
 
       return res.status(201).json({
-        message:
-          "Image uploaded successfully",
-
-        imageUrl,
-
-        filename:
-          req.file.filename,
+        message: "Image uploaded successfully",
+        imageUrl: result.secure_url,
+        filename: result.public_id,
       });
-
     } catch (error) {
-      console.log(
-        "UPLOAD ERROR:"
-      );
-
-      console.log(
-        error.message
-      );
+      console.log("CLOUDINARY UPLOAD ERROR:");
+      console.log(error.message);
 
       return res.status(500).json({
         message:
@@ -149,18 +97,12 @@ router.post(
   }
 );
 
-// ========================================
-// MULTIPLE IMAGE UPLOAD
-// ========================================
-
+// MULTIPLE IMAGES
 router.post(
   "/multiple",
   protect,
-  upload.array(
-    "images",
-    10
-  ),
-  (req, res) => {
+  upload.array("images", 10),
+  async (req, res) => {
     try {
       if (
         !req.files ||
@@ -172,43 +114,28 @@ router.post(
         });
       }
 
-      const imageUrls =
-        req.files.map(
-          (file) =>
-            `https://gharbazaar-hb8d.onrender.com/uploads/${file.filename}`
+      const uploadedImages =
+        await Promise.all(
+          req.files.map((file) =>
+            uploadToCloudinary(file.buffer)
+          )
         );
 
-      console.log(
-        "================================"
-      );
-
-      console.log(
-        "MULTIPLE IMAGES UPLOADED:"
-      );
-
-      console.log(
-        imageUrls
-      );
-
-      console.log(
-        "================================"
-      );
+      const imageUrls =
+        uploadedImages.map(
+          (result) => result.secure_url
+        );
 
       return res.status(201).json({
         message:
           "Images uploaded successfully",
-
         imageUrls,
       });
-
     } catch (error) {
       console.log(
-        "MULTIPLE UPLOAD ERROR:"
+        "CLOUDINARY MULTIPLE UPLOAD ERROR:"
       );
-
-      console.log(
-        error.message
-      );
+      console.log(error.message);
 
       return res.status(500).json({
         message:
@@ -219,24 +146,11 @@ router.post(
   }
 );
 
-// ========================================
-// MULTER ERROR HANDLER
-// ========================================
-
+// UPLOAD ERROR HANDLER
 router.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
-    console.log(
-      "MULTER ERROR:"
-    );
-
-    console.log(
-      error.message
-    );
+  (error, req, res, next) => {
+    console.log("UPLOAD ERROR:");
+    console.log(error.message);
 
     return res.status(400).json({
       message:
@@ -245,9 +159,5 @@ router.use(
     });
   }
 );
-
-// ========================================
-// EXPORT
-// ========================================
 
 module.exports = router;

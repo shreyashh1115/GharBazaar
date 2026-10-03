@@ -1,6 +1,5 @@
 const Property = require("../models/Property");
 
-
 // ================================
 // GET ALL PROPERTIES
 // ================================
@@ -12,7 +11,6 @@ const getProperties = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(properties);
-
   } catch (error) {
     console.log("GET PROPERTIES ERROR:");
     console.log(error);
@@ -23,16 +21,14 @@ const getProperties = async (req, res) => {
   }
 };
 
-
 // ================================
 // GET SINGLE PROPERTY
 // ================================
 
 const getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findById(
-      req.params.id
-    ).populate("owner", "name email phone");
+    const property = await Property.findById(req.params.id)
+      .populate("owner", "name email phone");
 
     if (!property) {
       return res.status(404).json({
@@ -41,7 +37,6 @@ const getPropertyById = async (req, res) => {
     }
 
     res.json(property);
-
   } catch (error) {
     console.log("GET PROPERTY ERROR:");
     console.log(error);
@@ -51,7 +46,6 @@ const getPropertyById = async (req, res) => {
     });
   }
 };
-
 
 // ================================
 // CREATE PROPERTY
@@ -99,7 +93,9 @@ const createProperty = async (req, res) => {
       propertyType,
       listingType: finalListingType,
       furnished,
-      images,
+
+      // Always store images as array
+      images: Array.isArray(images) ? images : [],
 
       // Logged-in user automatically becomes owner
       owner: req.user.id,
@@ -118,7 +114,6 @@ const createProperty = async (req, res) => {
       message: "Property added successfully",
       property,
     });
-
   } catch (error) {
     console.log("================================");
     console.log("CREATE PROPERTY ERROR:");
@@ -131,16 +126,20 @@ const createProperty = async (req, res) => {
   }
 };
 
-
 // ================================
 // UPDATE PROPERTY
 // ================================
 
 const updateProperty = async (req, res) => {
   try {
-    const property = await Property.findById(
-      req.params.id
-    );
+    console.log("================================");
+    console.log("UPDATE PROPERTY");
+    console.log("PROPERTY ID:", req.params.id);
+    console.log("UPDATE DATA:", req.body);
+    console.log("================================");
+
+    // Find existing property
+    const property = await Property.findById(req.params.id);
 
     if (!property) {
       return res.status(404).json({
@@ -148,35 +147,100 @@ const updateProperty = async (req, res) => {
       });
     }
 
-    // Check property owner
+    // ================================
+    // CHECK PROPERTY OWNER
+    // ================================
+
     if (
       !property.owner ||
       property.owner.toString() !== req.user.id
     ) {
       return res.status(403).json({
-        message:
-          "You can only edit your own property",
+        message: "You can only edit your own property",
       });
     }
+
+    // ================================
+    // PREPARE UPDATE DATA
+    // ================================
+
+    const updateData = {
+      ...req.body,
+    };
+
+    // Never allow owner to be changed from edit page
+    delete updateData.owner;
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+
+    // ================================
+    // HANDLE IMAGES
+    // ================================
+
+    /*
+      Important:
+
+      If frontend sends images:
+        use the new images array.
+
+      If frontend does NOT send images:
+        keep existing images.
+
+      This prevents existing Cloudinary images
+      from disappearing during normal property edits.
+    */
+
+    if (Object.prototype.hasOwnProperty.call(req.body, "images")) {
+      if (Array.isArray(req.body.images)) {
+        updateData.images = req.body.images.filter(
+          (image) =>
+            typeof image === "string" &&
+            image.trim() !== ""
+        );
+      } else {
+        // If invalid images value is sent,
+        // keep old images.
+        updateData.images = property.images || [];
+      }
+    } else {
+      // Images were not part of this edit request.
+      // Preserve existing images.
+      updateData.images = property.images || [];
+    }
+
+    // ================================
+    // UPDATE DATABASE
+    // ================================
 
     const updatedProperty =
       await Property.findByIdAndUpdate(
         req.params.id,
-        req.body,
+        {
+          $set: updateData,
+        },
         {
           new: true,
           runValidators: true,
         }
-      );
+      ).populate("owner", "name email phone");
+
+    console.log("================================");
+    console.log("PROPERTY UPDATED:");
+    console.log(updatedProperty);
+    console.log("UPDATED IMAGES:");
+    console.log(updatedProperty.images);
+    console.log("================================");
 
     res.json({
       message: "Property updated successfully",
       property: updatedProperty,
     });
-
   } catch (error) {
+    console.log("================================");
     console.log("UPDATE PROPERTY ERROR:");
     console.log(error);
+    console.log("================================");
 
     res.status(500).json({
       message: error.message,
@@ -184,16 +248,13 @@ const updateProperty = async (req, res) => {
   }
 };
 
-
 // ================================
 // DELETE PROPERTY
 // ================================
 
 const deleteProperty = async (req, res) => {
   try {
-    const property = await Property.findById(
-      req.params.id
-    );
+    const property = await Property.findById(req.params.id);
 
     if (!property) {
       return res.status(404).json({
@@ -207,19 +268,15 @@ const deleteProperty = async (req, res) => {
       property.owner.toString() !== req.user.id
     ) {
       return res.status(403).json({
-        message:
-          "You can only delete your own property",
+        message: "You can only edit your own property",
       });
     }
 
-    await Property.findByIdAndDelete(
-      req.params.id
-    );
+    await Property.findByIdAndDelete(req.params.id);
 
     res.json({
       message: "Property deleted successfully",
     });
-
   } catch (error) {
     console.log("DELETE PROPERTY ERROR:");
     console.log(error);
@@ -229,7 +286,6 @@ const deleteProperty = async (req, res) => {
     });
   }
 };
-
 
 // ================================
 // EXPORT

@@ -16,6 +16,33 @@ import "./App.css";
 
 const API_URL = "https://gharbazaar-hb8d.onrender.com/api";
 
+// Normalize image data from both old and new property formats.
+const getPropertyImages = (property) => {
+  if (!property) return [];
+
+  if (Array.isArray(property.images)) {
+    return property.images.filter(
+      (image) => typeof image === "string" && image.trim()
+    );
+  }
+
+  if (Array.isArray(property.imageUrls)) {
+    return property.imageUrls.filter(
+      (image) => typeof image === "string" && image.trim()
+    );
+  }
+
+  if (typeof property.image === "string" && property.image.trim()) {
+    return [property.image];
+  }
+
+  if (typeof property.imageUrl === "string" && property.imageUrl.trim()) {
+    return [property.imageUrl];
+  }
+
+  return [];
+};
+
 // ========================================
 // APP
 // ========================================
@@ -1206,13 +1233,7 @@ function App() {
     setEditingProperty({
       ...property,
 
-      images: Array.isArray(
-        property.images
-      )
-        ? [
-            ...property.images,
-          ]
-        : [],
+      images: getPropertyImages(property),
     });
 
     setPage(
@@ -1455,8 +1476,13 @@ function App() {
                   editingProperty.status,
 
                 images:
-                  editingProperty.images ||
-                  [],
+                  getPropertyImages(editingProperty),
+
+                // Keep compatibility with older property records
+                // that stored only one image field.
+                image:
+                  getPropertyImages(editingProperty)[0] ||
+                  "",
               }),
             }
           );
@@ -3360,23 +3386,21 @@ function App() {
                           className="property-image"
                         >
 
-                          {property.images &&
-                          property.images.length >
+                          {getPropertyImages(property).length >
                             0 ? (
 
                             <>
 
                               <img
                                 src={
-                                  property
-                                    .images[0]
+                                  getPropertyImages(property)[0]
                                 }
                                 alt={
                                   property.title
                                 }
                               />
 
-                              {property.images.length >
+                              {getPropertyImages(property).length >
                                 1 && (
 
                                 <span className="property-photo-count">
